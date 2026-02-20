@@ -1,5 +1,5 @@
-﻿using Bourt.DTOs.Request;
-using Bourt.DTOs.Response;
+﻿using Bourt.DTOs.Request.Place;
+using Bourt.DTOs.Response.Place;
 
 namespace Bourt.Services.Implementation
 {

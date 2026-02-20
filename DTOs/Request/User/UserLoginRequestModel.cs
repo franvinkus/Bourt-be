@@ -1,4 +1,4 @@
-﻿namespace Bourt.DTOs.Request
+﻿namespace Bourt.DTOs.Request.User
 {
     public class UserLoginRequestModel
     {

@@ -1,4 +1,4 @@
-﻿using Bourt.DTOs.Request;
+﻿using Bourt.DTOs.Request.Place;
 using Bourt.DTOs.Response;
 using Bourt.Enums;
 using Bourt.Services.Implementation;

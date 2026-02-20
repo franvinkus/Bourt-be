@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using Bourt.DTOs.Request;
+using Bourt.DTOs.Request.User;
 using Bourt.DTOs.Response;
 using Bourt.Enums;
 using Bourt.Services.Implementation;

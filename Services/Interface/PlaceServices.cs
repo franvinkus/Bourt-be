@@ -1,6 +1,6 @@
 ﻿using Bourt.Data;
-using Bourt.DTOs.Request;
-using Bourt.DTOs.Response;
+using Bourt.DTOs.Request.Place;
+using Bourt.DTOs.Response.Place;
 using Bourt.Models;
 using Bourt.Services.Implementation;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,5 @@
-﻿using Bourt.DTOs.Request;
-using Bourt.DTOs.Response;
+﻿using Bourt.DTOs.Request.User;
+using Bourt.DTOs.Response.User;
 
 namespace Bourt.Services.Implementation
 {

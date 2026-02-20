@@ -1,4 +1,4 @@
-﻿namespace Bourt.DTOs.Response
+﻿namespace Bourt.DTOs.Response.Place
 {
     public class PlaceInsertResponseModel
     {

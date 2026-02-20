@@ -1,4 +1,4 @@
-﻿namespace Bourt.DTOs.Response
+﻿namespace Bourt.DTOs.Response.User
 {
     public class UserRegisterResponseModel
     {
