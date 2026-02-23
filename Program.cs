@@ -22,6 +22,8 @@ builder.Services.AddSwaggerGen();
 //Services
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IPlaceServices, PlaceServices>();
+builder.Services.AddScoped<ICourtServices, CourtServices>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(option =>

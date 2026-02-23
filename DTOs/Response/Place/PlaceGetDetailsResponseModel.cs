@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
-
-namespace Bourt.DTOs.Response.Place
+﻿namespace Bourt.DTOs.Response.Place
 {
     public class PlaceGetDetailsResponseModel
     {
