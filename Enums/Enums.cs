@@ -11,6 +11,7 @@
     {
         Cancelled,
         Pending,
+        Verifying,
         Confirmed,
         Completed,
     }
