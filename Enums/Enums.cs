@@ -9,6 +9,7 @@
 
     public enum BookingStatus
     {
+        RequestCancel,
         Cancelled,
         Pending,
         Verifying,
