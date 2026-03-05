@@ -71,6 +71,7 @@ namespace Bourt.Services.Implementation
             };
         }
 
+        //For Customer
         public async Task<BookingGetCustomerPageModel> GetCustomerBooking(BookingGetCustomerRequestModel request, CancellationToken cancellationToken)
         {
             var query = _db.Bookings.AsQueryable();
@@ -122,11 +123,11 @@ namespace Bourt.Services.Implementation
             };
         }
 
-        public async Task<BookingGetOwnerPageModel> GetOwnerBooking(BookingGetOwnerRequestModel request, Guid OwnerId, CancellationToken cancellationToken)
+        public async Task<BookingGetOwnerPageModel> GetOwnerBooking(BookingGetOwnerRequestModel request, CancellationToken cancellationToken)
         {
             var query = _db.Bookings.AsQueryable();
 
-            query = query.Where(x => x.Court.PlaceId == request.PlaceId && x.Court.Place.OwnerId == OwnerId);
+            query = query.Where(x => x.Court.PlaceId == request.PlaceId && x.Court.Place.OwnerId == request.OwnerId);
 
             if (!string.IsNullOrEmpty(request.StringInput))
             {
