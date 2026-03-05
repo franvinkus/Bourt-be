@@ -9,7 +9,15 @@
         public string OpenHour { get; set; } = string.Empty;
         public string CloseHour { get; set; } = string.Empty;
         public string OwnerName { get; set; } = string.Empty;
-        public List<Courts> Courts { get; set; } = new List<Courts>();
+        public PagedCourts PagedCourts { get; set; } = new PagedCourts();
+    }
+
+    public class PagedCourts
+    {
+        public int TotalData { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public List<Courts> Datas { get; set; } = new List<Courts>();
     }
 
     public class Courts

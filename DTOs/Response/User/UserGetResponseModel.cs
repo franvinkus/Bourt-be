@@ -1,5 +1,13 @@
 ﻿namespace Bourt.DTOs.Response.User
 {
+    public class UserGetPageModel
+    {
+        public int TotalData { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public List<UserGetResponseModel> Data { get; set; } = new List<UserGetResponseModel>();
+    }
+
     public class UserGetResponseModel
     {
         public Guid UserId { get; set; }

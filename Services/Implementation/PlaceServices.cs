@@ -16,10 +16,33 @@ namespace Bourt.Services.Interface
             _db = db;
         }
 
-        public async Task<List<PlaceGetResponseModel>> Get(PlaceGetRequestModel request, CancellationToken cancellationToken)
+        public async Task<PlaceGetPageModel> Get(PlaceGetRequestModel request, CancellationToken cancellationToken)
         {
+            var query = _db.Places.AsQueryable();
+
+            if (!string.IsNullOrEmpty(request.StringInput))
+            {
+                query = query.Where(x => x.Name == request.StringInput);
+            }
+
+            if (!string.IsNullOrEmpty(request.OrderState))
+            {
+                if (request.OrderState == "ASC")
+                {
+                    query = query.OrderBy(x => x.CreatedAt);
+                }
+                else if (request.OrderState == "DESC")
+                {
+                    query = query.OrderByDescending(x => x.CreatedAt);
+                }
+            }
+
+            var totalData = await query.CountAsync(cancellationToken);
+
             var places = await _db.Places
                 .Include(x => x.OwnerName)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .Select(x => new PlaceGetResponseModel
                 {
                     PlaceId = x.Id,
@@ -33,14 +56,20 @@ namespace Bourt.Services.Interface
                 })
                 .ToListAsync(cancellationToken);
 
-            return places;
+            return new PlaceGetPageModel
+            {
+                TotalData = totalData,
+                TotalPage = (int)Math.Ceiling(totalData / (double)request.PageSize),
+                CurrentPage = request.PageNumber,
+                Datas = places
+            };
         }
 
         public async Task<PlaceGetDetailsResponseModel> GetDetails(PlaceGetDetailsRequestModel request, CancellationToken cancellationToken)
         {
             var placeDetails = await _db.Places
                 .Where(x => x.Id == request.PlaceId)
-                .Select(x => new PlaceGetDetailsResponseModel
+                .Select(x => new
                 {
                     Name = x.Name,
                     Description = x.Description,
@@ -48,19 +77,67 @@ namespace Bourt.Services.Interface
                     Address = x.Address,
                     OpenHour = x.OpenHour,
                     CloseHour = x.CloseHour,
-                    OwnerName = x.OwnerName.Username,
-                    Courts = x.Courts
-                    .Select(c => new Courts
-                    {
-                        CourtId = c.Id,
-                        CourtName = c.Name,
-                        CourtNumber = c.Number,
-                        PricePerHour = c.PricePerHour,
-                    }).ToList()
+                    OwnerName = x.OwnerName.Username
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return placeDetails;
+            if (placeDetails == null) return null;
+
+            var query = _db.Courts.AsQueryable();
+
+            query = query.Where(x => x.PlaceId == request.PlaceId);
+
+            if (!string.IsNullOrEmpty(request.StringInput))
+            {
+                query = query.Where(x => x.Name == request.StringInput);
+            }
+
+            if (!string.IsNullOrEmpty(request.OrderState))
+            {
+                if (request.OrderState == "ASC")
+                {
+                    query = query.OrderBy(x => x.CreatedAt);
+                }
+                else if (request.OrderState == "DESC")
+                {
+                    query = query.OrderByDescending(x => x.CreatedAt);
+                }
+            }
+            else
+            {
+                query = query.OrderByDescending(x => x.Name);
+            }
+
+            var totalDatas = await query.CountAsync(cancellationToken);
+
+            var courts = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new Courts
+                {
+                    CourtId = x.Id,
+                    CourtName = x.Name,
+                    CourtNumber = x.Number,
+                    PricePerHour = x.PricePerHour,
+                }).ToListAsync(cancellationToken);
+
+            return new PlaceGetDetailsResponseModel
+            {
+                Name = placeDetails.Name,
+                Description = placeDetails.Description,
+                City = placeDetails.City,
+                Address = placeDetails.Address,
+                OpenHour = placeDetails.OpenHour,
+                CloseHour = placeDetails.CloseHour,
+                OwnerName = placeDetails.OwnerName,
+                PagedCourts = new PagedCourts
+                {
+                    TotalData = totalDatas,
+                    TotalPages = (int)Math.Ceiling(totalDatas / (double)request.PageSize),
+                    CurrentPage = request.PageNumber,
+                    Datas = courts
+                }
+            };
         }
 
         public async Task<PlaceInsertResponseModel> Insert(Guid ownerId, PlaceInsertRequestModel request, CancellationToken cancellationToken)

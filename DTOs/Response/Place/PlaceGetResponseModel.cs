@@ -1,5 +1,12 @@
 ﻿namespace Bourt.DTOs.Response.Place
 {
+    public class PlaceGetPageModel
+    {
+        public int TotalData { get; set; }
+        public int TotalPage { get; set; }
+        public int CurrentPage { get; set; }
+        public List<PlaceGetResponseModel> Datas { get; set; } = new List<PlaceGetResponseModel>();
+    }
     public class PlaceGetResponseModel
     {
         public Guid PlaceId { get; set; }

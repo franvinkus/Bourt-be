@@ -24,9 +24,32 @@ namespace Bourt.Services.Interface
             _configuration = configuration;
         }
 
-        public async Task<List<UserGetResponseModel>> Get(UserGetRequestModel request, CancellationToken cancellationToken)
+        public async Task<UserGetPageModel> Get(UserGetRequestModel request, CancellationToken cancellationToken)
         {
-            var users = await _db.Users
+            var query = _db.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(request.StringInput))
+            {
+                query = query.Where(x => x.Username == request.StringInput);
+            }
+
+            if (!string.IsNullOrEmpty(request.OrderState))
+            {
+                if (request.OrderState == "ASC")
+                {
+                    query = query.OrderBy(x => x.CreatedAt);
+                }
+                else if (request.OrderState == "DESC")
+                {
+                    query = query.OrderByDescending(x => x.CreatedAt);
+                }
+            }
+
+            var totalData = await query.CountAsync(cancellationToken);
+
+            var users = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .Select(x => new UserGetResponseModel
                 {
                     UserId = x.Id,
@@ -36,7 +59,13 @@ namespace Bourt.Services.Interface
                 })
                 .ToListAsync(cancellationToken);
 
-            return users;
+            return new UserGetPageModel
+            {
+                TotalData = totalData,
+                TotalPages = (int)Math.Ceiling(totalData / (double)request.PageSize),
+                CurrentPage = request.PageNumber,
+                Data = users
+            };
         }
 
         public async Task<UserRegisterResponseModel> Register (UserRegisterRequestModel request, CancellationToken cancellationToken)
