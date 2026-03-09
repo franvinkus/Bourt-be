@@ -54,7 +54,7 @@ namespace Bourt.Controllers
             return Ok(result);
         }
 
-        [HttpPost("insert-booking/{id}")]
+        [HttpPost("insert-booking/{Id}")]
         [Authorize (Roles = nameof(Enums.UserRole.Customer))]
         public async Task<IActionResult> Insert([FromRoute] Guid id, [FromBody] BookingInsertRequestModel model, CancellationToken cancellationToken)
         {

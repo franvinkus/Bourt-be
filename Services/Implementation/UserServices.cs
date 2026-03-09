@@ -98,6 +98,7 @@ namespace Bourt.Services.Interface
                     Email = request.Email,
                     PasswordHash = passwordHash,
                     CreatedAt = DateTime.UtcNow,
+                    Role = UserRole.Customer,
                 };
 
                 _db.Users.Add(newUser);
