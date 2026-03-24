@@ -10,8 +10,8 @@
         public string Address { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public int SlotAvailibility { get; set; }
-        public string OpenHour { get; set; } = string.Empty;
-        public string CloseHour { get; set; } = string.Empty;
+        public TimeOnly OpenHour { get; set; } 
+        public TimeOnly CloseHour { get; set; }
         public DateTime CreatedAt {  get; set; }
         public DateTime UpdateAt { get; set; }
         public ICollection<Court> Courts { get; set; } = new List<Court>();

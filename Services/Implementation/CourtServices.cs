@@ -23,6 +23,7 @@ namespace Bourt.Services.Implementation
                 .Where(p => p.Id == request.CourtId)
                 .Select(x => new CourtGetDetailsResponseModel
                 {
+                    PlaceId = x.PlaceId,
                     CourtName = x.Name,
                     CourtNumber = x.Number,
                     CourtPricePerHour = x.PricePerHour,

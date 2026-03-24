@@ -18,7 +18,6 @@ namespace Bourt.Controllers
         }
 
         [HttpGet("get-place")]
-        [Authorize]
         public async Task<IActionResult> Get([FromQuery] PlaceGetRequestModel model, CancellationToken cancellationToken)
         {
             var result = await _service.Get(model, cancellationToken);
@@ -33,15 +32,11 @@ namespace Bourt.Controllers
         }
 
         [HttpGet("get-place/{id}")]
-        [Authorize]
-        public async Task<IActionResult> GetDetails([FromRoute] Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDetails([FromRoute] Guid id, [FromQuery] PlaceGetDetailsRequestModel request, CancellationToken cancellationToken)
         {
-            var model = new PlaceGetDetailsRequestModel
-            {
-                PlaceId = id
-            };
 
-            var result = await _service.GetDetails(model, cancellationToken);
+            request.PlaceId = id;
+            var result = await _service.GetDetails(request, cancellationToken);
 
             if (result != null)
             {

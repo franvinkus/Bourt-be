@@ -80,6 +80,21 @@ namespace Bourt.Controllers
             }
         }
 
+        [HttpGet("booking-availability/{Id}")]
+        public async Task<IActionResult> AvailableBooking([FromRoute] Guid id, [FromQuery] string date, CancellationToken cancellationToken)
+        {
+            var result = await _services.GetAvailableCourtHours(id, date, cancellationToken);
+            
+            if(result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
         [HttpPatch("to-pending/{id}")]
         [Authorize(Roles = nameof(Enums.UserRole.Owner))]
         public async Task<IActionResult> ToVerifying([FromRoute] Guid id, CancellationToken cancellationToken)

@@ -9,6 +9,7 @@ namespace Bourt.Services.Interface
         Task<BookingGetCustomerPageModel> GetCustomerBooking(BookingGetCustomerRequestModel request, CancellationToken cancellation);
         Task<BookingGetOwnerPageModel> GetOwnerBooking(BookingGetOwnerRequestModel request, CancellationToken cancellation);
         Task<BookingInsertResponseModel> Insert(BookingInsertRequestModel request, CancellationToken cancellationToken);
+        Task<List<BookingGetAvailableCourtHoursResponse>> GetAvailableCourtHours(Guid id, string date, CancellationToken cancellationToken);
         Task<BookingPatchStatusResponseModel> ToVerifying(BookingPatchStatusRequestModel request, CancellationToken cancelToken);
         Task<BookingPatchStatusResponseModel> ToConfirmed(BookingPatchStatusRequestModel request, CancellationToken cancelToken);
         Task<BookingPatchStatusResponseModel> ToCompleted(BookingPatchStatusRequestModel request, CancellationToken cancelToken);

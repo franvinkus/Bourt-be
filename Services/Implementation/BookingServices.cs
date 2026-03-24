@@ -109,6 +109,7 @@ namespace Bourt.Services.Implementation
                         BookingId = x.Id,
                         CourtNumber = x.Court.Number,
                         PlaceName = x.Court.Place.Name,
+                        CourtName = x.Court.Name,
                         Date = x.Date,
                         StartTime = x.StartTime,
                         EndTime = x.EndTime,
@@ -259,6 +260,43 @@ namespace Bourt.Services.Implementation
                 EndTime = endTimeParse,
                 Message = "Success"
             };
+        }
+
+        public async Task<List<BookingGetAvailableCourtHoursResponse>> GetAvailableCourtHours(Guid courtId, string pickedDate, CancellationToken cancellationToken)
+        {
+            var date = DateOnly.Parse(pickedDate);
+            var availableTime = new List<BookingGetAvailableCourtHoursResponse>();
+
+            var court = await _db.Courts
+                .Include(x => x.Place)
+                .FirstOrDefaultAsync(x => x.Id == courtId, cancellationToken);
+
+            if (court == null) return null;
+
+            var openHour = court.Place.OpenHour;
+            var closeHour = court.Place.CloseHour;
+
+            var bookedCourts = await _db.Bookings.Where(x => x.CourtId == courtId && x.Date == date && x.Status != Enums.BookingStatus.Cancelled)
+                .ToListAsync(cancellationToken);
+
+            var currentTime = openHour;
+
+            while(currentTime < closeHour)
+            {
+                var nextTime = currentTime.AddHours(1);
+
+                bool isBooked = bookedCourts.Any(x => x.StartTime < nextTime && x.EndTime > currentTime);
+
+                availableTime.Add(new BookingGetAvailableCourtHoursResponse
+                {
+                    Time = currentTime.ToString("HH:mm"),
+                    IsBooked = isBooked
+                });
+
+                currentTime = nextTime;
+            }
+
+            return availableTime;
         }
 
         public async Task<BookingPatchStatusResponseModel> ToVerifying(BookingPatchStatusRequestModel request, CancellationToken cancellationToken)

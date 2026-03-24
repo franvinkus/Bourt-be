@@ -20,9 +20,10 @@ namespace Bourt.Services.Interface
         {
             var query = _db.Places.AsQueryable();
 
-            if (!string.IsNullOrEmpty(request.StringInput))
+            if (!string.IsNullOrWhiteSpace(request.StringInput))
             {
-                query = query.Where(x => x.Name == request.StringInput);
+                var searchKeyword = request.StringInput.ToLower();
+                query = query.Where(x => x.Name.ToLower().Contains(searchKeyword));
             }
 
             if (!string.IsNullOrEmpty(request.OrderState))
@@ -39,7 +40,7 @@ namespace Bourt.Services.Interface
 
             var totalData = await query.CountAsync(cancellationToken);
 
-            var places = await _db.Places
+            var places = await query
                 .Include(x => x.OwnerName)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
@@ -50,8 +51,8 @@ namespace Bourt.Services.Interface
                     Description = x.Description,
                     City = x.City,
                     Address = x.Address,
-                    OpenHour = x.OpenHour,
-                    CloseHour = x.CloseHour,
+                    OpenHour = x.OpenHour.ToString("HH:mm"),
+                    CloseHour = x.CloseHour.ToString("HH:mm"),
                     OwnerName = x.OwnerName.Username
                 })
                 .ToListAsync(cancellationToken);
@@ -87,9 +88,10 @@ namespace Bourt.Services.Interface
 
             query = query.Where(x => x.PlaceId == request.PlaceId);
 
-            if (!string.IsNullOrEmpty(request.StringInput))
+            if (!string.IsNullOrWhiteSpace(request.StringInput))
             {
-                query = query.Where(x => x.Name == request.StringInput);
+                var searchKeyword = request.StringInput.ToLower();
+                query = query.Where(x => x.Name.ToLower().Contains(searchKeyword));
             }
 
             if (!string.IsNullOrEmpty(request.OrderState))
@@ -105,7 +107,7 @@ namespace Bourt.Services.Interface
             }
             else
             {
-                query = query.OrderByDescending(x => x.Name);
+                query = query.OrderBy(x => x.Number);
             }
 
             var totalDatas = await query.CountAsync(cancellationToken);
@@ -127,8 +129,8 @@ namespace Bourt.Services.Interface
                 Description = placeDetails.Description,
                 City = placeDetails.City,
                 Address = placeDetails.Address,
-                OpenHour = placeDetails.OpenHour,
-                CloseHour = placeDetails.CloseHour,
+                OpenHour = placeDetails.OpenHour.ToString("HH:mm"),
+                CloseHour = placeDetails.CloseHour.ToString("HH:mm"),
                 OwnerName = placeDetails.OwnerName,
                 PagedCourts = new PagedCourts
                 {
@@ -202,8 +204,8 @@ namespace Bourt.Services.Interface
                     Description = request.Description,
                     City = request.City,
                     Address = request.Address,
-                    OpenHour = request.OpenHour,
-                    CloseHour = request.CloseHour,
+                    OpenHour = TimeOnly.Parse(request.OpenHour),
+                    CloseHour = TimeOnly.Parse(request.CloseHour),
                     CreatedAt = DateTime.UtcNow,
                 };
 
@@ -247,8 +249,8 @@ namespace Bourt.Services.Interface
                 check.Description = request.Description;
                 check.City = request.City;
                 check.Address = request.Address;
-                check.OpenHour = request.OpenHour;
-                check.CloseHour = request.CloseHour;
+                check.OpenHour = TimeOnly.Parse(request.OpenHour);
+                check.CloseHour = TimeOnly.Parse(request.CloseHour);
                 check.UpdateAt = DateTime.UtcNow;
 
                 await _db.SaveChangesAsync(cancellationToken);
