@@ -12,6 +12,7 @@
     {
         public Guid BookingId { get; set; }
         public string PlaceName { get; set; } = string.Empty;
+        public string CourtName { get; set; } = string.Empty;
         public int CourtNumber { get; set; }
         public string Username { get; set; } = string.Empty;
         public DateOnly Date { get; set; }

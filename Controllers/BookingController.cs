@@ -40,14 +40,13 @@ namespace Bourt.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-owner-booking/{placeId}")]
+        [HttpGet("get-owner-booking")]
         [Authorize(Roles = nameof(Enums.UserRole.Owner))]
-        public async Task<IActionResult> GetOwnerBooking([FromRoute] Guid placeId, [FromQuery] BookingGetOwnerRequestModel model, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetOwnerBooking([FromQuery] BookingGetOwnerRequestModel model, CancellationToken cancellationToken)
         {
             var OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             model.OwnerId = Guid.Parse(OwnerId);
-            model.PlaceId = placeId;
 
             var result = await _services.GetOwnerBooking(model, cancellationToken);
 

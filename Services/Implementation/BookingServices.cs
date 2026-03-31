@@ -51,11 +51,12 @@ namespace Bourt.Services.Implementation
                 {
                     BookingId = x.Id,
                     CourtId = x.CourtId,
+                    CourtName = x.Court.Name,
                     CourtNumber = x.Court.Number,
                     PlaceId = x.Court.PlaceId,
                     PlaceName = x.Court.Place.Name,
                     UserId = x.UserId,
-                    UserName = x.User.Username,
+                    Username = x.User.Username,
                     Date = x.Date,
                     StartTime = x.StartTime,
                     EndTime = x.EndTime,
@@ -67,7 +68,7 @@ namespace Bourt.Services.Implementation
                 TotalData = countData,
                 TotalPages = (int)Math.Ceiling(countData / (double)request.PageSize),
                 CurrentPage = request.PageNumber,
-                GetAll = bookings,
+                datas = bookings,
             };
         }
 
@@ -78,9 +79,10 @@ namespace Bourt.Services.Implementation
 
             query = query.Where(x => x.UserId == request.CustomerId);
 
-            if (!string.IsNullOrEmpty(request.StringInput))
+            if (!string.IsNullOrWhiteSpace(request.StringInput))
             {
-                query = query.Where(x => x.Court.Name == request.StringInput || x.Court.Place.Name == request.StringInput);
+                var searchKeyword = request.StringInput.ToLower();
+                query = query.Where(x => x.Court.Name.ToLower().Contains(request.StringInput) || x.Court.Place.Name.ToLower().Contains(request.StringInput));
             }
 
             if (!string.IsNullOrEmpty(request.OrderDate))
@@ -128,7 +130,12 @@ namespace Bourt.Services.Implementation
         {
             var query = _db.Bookings.AsQueryable();
 
-            query = query.Where(x => x.Court.PlaceId == request.PlaceId && x.Court.Place.OwnerId == request.OwnerId);
+            var placeId = await _db.Places
+                .Where(x => x.OwnerId == request.OwnerId)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            query = query.Where(x => x.Court.PlaceId == placeId && x.Court.Place.OwnerId == request.OwnerId);
 
             if (!string.IsNullOrEmpty(request.StringInput))
             {
@@ -148,7 +155,7 @@ namespace Bourt.Services.Implementation
             }
             else
             {
-                query = query.OrderByDescending(x => x.CreatedAt);
+                query = query.OrderByDescending(x => x.Date);
             }
 
             var totalDatas = await query.CountAsync(cancellationToken);
@@ -159,6 +166,7 @@ namespace Bourt.Services.Implementation
                 .Select(x => new BookingGetOwnerResponseModel
                 {
                     BookingId = x.Id,
+                    CourtName = x.Court.Name,
                     CourtNumber = x.Court.Number,
                     PlaceName = x.Court.Place.Name,
                     Username = x.User.Username,
