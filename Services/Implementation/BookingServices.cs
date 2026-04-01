@@ -60,6 +60,7 @@ namespace Bourt.Services.Implementation
                     Date = x.Date,
                     StartTime = x.StartTime,
                     EndTime = x.EndTime,
+                    Status = x.Status.ToString(),
                 })
                 .ToListAsync(cancellationToken);
 
@@ -115,6 +116,7 @@ namespace Bourt.Services.Implementation
                         Date = x.Date,
                         StartTime = x.StartTime,
                         EndTime = x.EndTime,
+                        Status = x.Status.ToString(),
                     }).ToListAsync(cancellationToken);
 
             return new BookingGetCustomerPageModel
@@ -173,6 +175,7 @@ namespace Bourt.Services.Implementation
                     Date = x.Date,
                     StartTime = x.StartTime,
                     EndTime = x.EndTime,
+                    Status = x.Status.ToString(),
                 }).ToListAsync(cancellationToken);
 
             return new BookingGetOwnerPageModel
