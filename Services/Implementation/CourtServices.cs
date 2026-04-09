@@ -58,6 +58,7 @@ namespace Bourt.Services.Implementation
                 var courtNumbers = await _db.Courts.Select(x => x.Number).ToListAsync(cancellationToken);
 
                 var checkNumbers = await _db.Courts
+                    .Where(x => x.PlaceId == request.PlaceId)
                     .AnyAsync(x => x.Number == request.Number || courtNumbers.Contains(request.Number), cancellationToken);
 
                 if (checkNumbers)

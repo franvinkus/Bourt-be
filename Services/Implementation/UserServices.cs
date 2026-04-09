@@ -28,9 +28,10 @@ namespace Bourt.Services.Interface
         {
             var query = _db.Users.AsQueryable();
 
-            if (!string.IsNullOrEmpty(request.StringInput))
+            if (!string.IsNullOrWhiteSpace(request.StringInput))
             {
-                query = query.Where(x => x.Username == request.StringInput);
+                var requestInput = request.StringInput.ToLower();
+                query = query.Where(x => x.Username.ToLower().Contains(requestInput));
             }
 
             if (!string.IsNullOrEmpty(request.OrderState))
