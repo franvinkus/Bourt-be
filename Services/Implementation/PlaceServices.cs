@@ -47,6 +47,7 @@ namespace Bourt.Services.Interface
                 .Take(request.PageSize)
                 .Select(x => new PlaceGetResponseModel
                 {
+                    PlaceId = x.Id,
                     Name = x.Name,
                     Description = x.Description,
                     City = x.City,
