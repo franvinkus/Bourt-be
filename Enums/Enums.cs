@@ -16,4 +16,10 @@
         Confirmed,
         Completed,
     }
+
+    public enum PlaceStatus
+    {
+        Requesting, 
+        Accepted,
+    }
 }

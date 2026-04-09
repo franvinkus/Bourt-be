@@ -31,6 +31,21 @@ namespace Bourt.Controllers
             }
         }
 
+        [HttpGet("get-place-admin")]
+        [Authorize(Roles = nameof(Enums.UserRole.Admin))]
+        public async Task<IActionResult> GetPlaceAdmin([FromQuery] PlaceGetRequestModel model, CancellationToken cancellationToken)
+        {
+            var result = await _service.Get(model, cancellationToken);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
         [HttpGet("get-place/{id}")]
         public async Task<IActionResult> GetDetails([FromRoute] Guid id, [FromQuery] PlaceGetDetailsRequestModel request, CancellationToken cancellationToken)
         {

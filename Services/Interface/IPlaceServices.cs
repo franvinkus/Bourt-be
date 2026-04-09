@@ -6,9 +6,12 @@ namespace Bourt.Services.Implementation
     public interface IPlaceServices
     {
         Task<PlaceGetPageModel> Get(PlaceGetRequestModel request, CancellationToken cancellationToken);
+        Task<PlaceGetPageModel> GetAdminPlace(PlaceGetRequestModel request, CancellationToken cancellationToken);
         Task<PlaceGetDetailsResponseModel> GetDetails(PlaceGetDetailsRequestModel request, CancellationToken cancellationToken);
         Task<PlaceInsertResponseModel> Insert(Guid ownerId, PlaceInsertRequestModel request, CancellationToken cacncellationToken);
         Task<PlaceUpdateResponseModel> Update(PlaceUpdateRequestModel request, CancellationToken canncellationToken);
         Task<PlaceDeleteResponseModel> Delete(PlaceDeleteRequestModel request, CancellationToken cancellationToken);
+        Task<PlaceChangeStatusResponseModel> ChangeStatus(PlaceChangeStatusRequestModel request, CancellationToken cancellationToken);
+
     }
 }

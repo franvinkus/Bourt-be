@@ -42,6 +42,56 @@ namespace Bourt.Services.Interface
 
             var places = await query
                 .Include(x => x.OwnerName)
+                .Where(x => x.Status == Enums.PlaceStatus.Accepted)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new PlaceGetResponseModel
+                {
+                    Name = x.Name,
+                    Description = x.Description,
+                    City = x.City,
+                    Address = x.Address,
+                    OpenHour = x.OpenHour.ToString("HH:mm"),
+                    CloseHour = x.CloseHour.ToString("HH:mm"),
+                    OwnerName = x.OwnerName.Username
+                })
+                .ToListAsync(cancellationToken);
+
+            return new PlaceGetPageModel
+            {
+                TotalData = totalData,
+                TotalPage = (int)Math.Ceiling(totalData / (double)request.PageSize),
+                CurrentPage = request.PageNumber,
+                Datas = places
+            };
+        }
+
+        public async Task<PlaceGetPageModel> GetAdminPlace(PlaceGetRequestModel request, CancellationToken cancellationToken)
+        {
+            var query = _db.Places.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(request.StringInput))
+            {
+                var searchKeyword = request.StringInput.ToLower();
+                query = query.Where(x => x.Name.ToLower().Contains(searchKeyword));
+            }
+
+            if (!string.IsNullOrEmpty(request.OrderState))
+            {
+                if (request.OrderState == "ASC")
+                {
+                    query = query.OrderBy(x => x.CreatedAt);
+                }
+                else if (request.OrderState == "DESC")
+                {
+                    query = query.OrderByDescending(x => x.CreatedAt);
+                }
+            }
+
+            var totalData = await query.CountAsync(cancellationToken);
+
+            var places = await query
+                .Include(x => x.OwnerName)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Select(x => new PlaceGetResponseModel
@@ -207,6 +257,7 @@ namespace Bourt.Services.Interface
                     OpenHour = TimeOnly.Parse(request.OpenHour),
                     CloseHour = TimeOnly.Parse(request.CloseHour),
                     CreatedAt = DateTime.UtcNow,
+                    Status = Enums.PlaceStatus.Requesting,
                 };
 
                 _db.Places.Add(places);
@@ -294,7 +345,27 @@ namespace Bourt.Services.Interface
                     Message = "Success"
                 };
             }
+        }
 
+        public async Task<PlaceChangeStatusResponseModel> ChangeStatus(PlaceChangeStatusRequestModel request, CancellationToken cancellationToken)
+        {
+            var placeToChangeStatus = await _db.Places.FirstOrDefaultAsync(x => x.Id == request.PlaceId, cancellationToken);
+
+            if(placeToChangeStatus.Status == Enums.PlaceStatus.Requesting)
+            {
+                placeToChangeStatus.Status = Enums.PlaceStatus.Accepted;
+            }
+            else if (placeToChangeStatus.Status == Enums.PlaceStatus.Accepted)
+            {
+                placeToChangeStatus.Status = Enums.PlaceStatus.Requesting;
+            }
+
+            await _db.SaveChangesAsync(cancellationToken);
+            
+            return new PlaceChangeStatusResponseModel
+            {
+                Message = "Change status Successfully"
+            };
         }
     }
 }
